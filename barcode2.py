@@ -1,18 +1,18 @@
 import cv2
 import zbar
 
+scanner = zbar.ImageScanner()
+scanner.parse_config('enable')
+
 im = cv2.imread('images/barcode2.jpg')
 # im = cv2.imread('images/barcode1.jpg')
 # im = cv2.imread('images/qrcode.jpg')
-rows,cols = im.shape[:2]
 gray_im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+rows,cols = im.shape[:2]
 ret,threshold_im = cv2.threshold(gray_im, 150, 255, cv2.THRESH_BINARY)
 im,contours,hierarchy = cv2.findContours(threshold_im, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-scanner = zbar.ImageScanner()
-scanner.parse_config('enable')
 scanned_data = {}
-
 for i,contour in enumerate(contours):
     rect = cv2.minAreaRect(contour)
     w = int(rect[1][0])
@@ -28,7 +28,6 @@ for i,contour in enumerate(contours):
         bottom = center_pt[1] + h_half
         left = center_pt[0] - w_half
         angle = int(rect[2])
-        cropped_im = gray_im[top:bottom, left:right]
         M = cv2.getRotationMatrix2D(center_pt, angle, 1)
         rotated_im = cv2.warpAffine(im.copy(), M, (cols,rows))
         zbar_image = zbar.Image(cols, rows, 'Y800', rotated_im.tostring())
