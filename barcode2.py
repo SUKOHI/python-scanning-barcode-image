@@ -13,7 +13,7 @@ ret,threshold_im = cv2.threshold(gray_im, 150, 255, cv2.THRESH_BINARY)
 im,contours,hierarchy = cv2.findContours(threshold_im, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 scanned_data = {}
-for i,contour in enumerate(contours):
+for contour in contours:
     rect = cv2.minAreaRect(contour)
     w = int(rect[1][0])
     h = int(rect[1][1])
